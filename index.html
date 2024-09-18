@@ -9,23 +9,34 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
             background-color: #f7f7f7;
         }
-        #graph-container {
-            width: 80%;
-            max-width: 600px;
-        }
-        .teacher-input {
+        h2 {
             margin-bottom: 20px;
         }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
         input {
+            width: 50px;
+            padding: 5px;
+        }
+        button {
             margin: 5px;
+            padding: 10px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -33,19 +44,26 @@
 
 <h2>KollAnalyst - Proficiency Level Distribution</h2>
 
-<div id="teacher-container">
-    <div class="teacher-input">
-        <h3>Teacher 1</h3>
-        <label for="fours1">Number of 4s:</label>
-        <input type="number" id="fours1" value="0">
-        <label for="threes1">Number of 3s:</label>
-        <input type="number" id="threes1" value="0">
-        <label for="twos1">Number of 2s:</label>
-        <input type="number" id="twos1" value="0">
-        <label for="ones1">Number of 1s:</label>
-        <input type="number" id="ones1" value="0">
-    </div>
-</div>
+<table id="teacher-table">
+    <thead>
+        <tr>
+            <th>Teacher</th>
+            <th>4s</th>
+            <th>3s</th>
+            <th>2s</th>
+            <th>1s</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr id="teacher1-row">
+            <td>Teacher 1</td>
+            <td><input type="number" id="fours1" value="0"></td>
+            <td><input type="number" id="threes1" value="0"></td>
+            <td><input type="number" id="twos1" value="0"></td>
+            <td><input type="number" id="ones1" value="0"></td>
+        </tr>
+    </tbody>
+</table>
 
 <button onclick="addTeacher()">Add Another Teacher</button>
 <button onclick="updateGraph()">Graph Proficiency</button>
@@ -59,20 +77,17 @@
 
     function addTeacher() {
         teacherCount++;
-        const teacherDiv = document.createElement('div');
-        teacherDiv.classList.add('teacher-input');
-        teacherDiv.innerHTML = `
-            <h3>Teacher ${teacherCount}</h3>
-            <label for="fours${teacherCount}">Number of 4s:</label>
-            <input type="number" id="fours${teacherCount}" value="0">
-            <label for="threes${teacherCount}">Number of 3s:</label>
-            <input type="number" id="threes${teacherCount}" value="0">
-            <label for="twos${teacherCount}">Number of 2s:</label>
-            <input type="number" id="twos${teacherCount}" value="0">
-            <label for="ones${teacherCount}">Number of 1s:</label>
-            <input type="number" id="ones${teacherCount}" value="0">
+        const tableBody = document.querySelector("#teacher-table tbody");
+        const newRow = document.createElement('tr');
+        newRow.id = `teacher${teacherCount}-row`;
+        newRow.innerHTML = `
+            <td>Teacher ${teacherCount}</td>
+            <td><input type="number" id="fours${teacherCount}" value="0"></td>
+            <td><input type="number" id="threes${teacherCount}" value="0"></td>
+            <td><input type="number" id="twos${teacherCount}" value="0"></td>
+            <td><input type="number" id="ones${teacherCount}" value="0"></td>
         `;
-        document.getElementById('teacher-container').appendChild(teacherDiv);
+        tableBody.appendChild(newRow);
     }
 
     function updateGraph() {
@@ -101,7 +116,7 @@
             values: [totalFours, totalThrees, totalTwos, totalOnes],
             labels: ['4s', '3s', '2s', '1s'],
             type: 'pie',
-            hole: .4,  // Makes it a donut chart
+            hole: .4,  // Donut chart
             textinfo: 'label+percent',
             insidetextorientation: 'radial'
         }];
