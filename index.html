@@ -3,32 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Proficiency App</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <title>KollAnalyst</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Student Proficiency Tracker</h1>
-    
-    <!-- Form for entering student scores -->
-    <form id="scoreForm">
-        <label for="score4">Number of 4s:</label>
-        <input type="number" id="score4" name="score4" required><br><br>
-        
-        <label for="score3">Number of 3s:</label>
-        <input type="number" id="score3" name="score3" required><br><br>
-        
-        <label for="score2">Number of 2s:</label>
-        <input type="number" id="score2" name="score2" required><br><br>
-        
-        <label for="score1">Number of 1s:</label>
-        <input type="number" id="score1" name="score1" required><br><br>
 
-        <button type="button" onclick="generateChart()">Submit Scores</button>
-    </form>
+<h1>KollAnalyst</h1>
+<table border="1">
+    <tr>
+        <th>Teacher</th>
+        <th>4</th>
+        <th>3</th>
+        <th>2</th>
+        <th>1</th>
+    </tr>
+    <tr>
+        <td>Teacher 1</td>
+        <td><input type="number" id="teacher1_4"></td>
+        <td><input type="number" id="teacher1_3"></td>
+        <td><input type="number" id="teacher1_2"></td>
+        <td><input type="number" id="teacher1_1"></td>
+    </tr>
+    <!-- Repeat for Teacher 2, 3, 4, 5, 6 -->
+</table>
 
-    <div id="chart"></div>
+<button onclick="generateChart()">Generate Chart</button>
 
-    <script src="app.js"></script>
+<canvas id="donutChart" width="400" height="400"></canvas>
+
+<script>
+// Step 2: Calculate percentages and generate donut chart
+function generateChart() {
+    let totalStudents = 0;
+    let scores = [0, 0, 0, 0]; // For 4, 3, 2, 1
+
+    // Loop through teachers and calculate totals
+    for (let i = 1; i <= 6; i++) {
+        scores[0] += parseInt(document.getElementById(`teacher${i}_4`).value || 0);
+        scores[1] += parseInt(document.getElementById(`teacher${i}_3`).value || 0);
+        scores[2] += parseInt(document.getElementById(`teacher${i}_2`).value || 0);
+        scores[3] += parseInt(document.getElementById(`teacher${i}_1`).value || 0);
+    }
+
+    totalStudents = scores.reduce((a, b) => a + b, 0);
+
+    let percentages = scores.map(score => (score / totalStudents) * 100);
+
+    // Step 3: Generate donut chart using Chart.js
+    const ctx = document.getElementById('donutChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['4', '3', '2', '1'],
+            datasets: [{
+                data: percentages,
+                backgroundColor: ['#4CAF50', '#FFEB3B', '#FF9800', '#F44336']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+</script>
+
 </body>
 </html>
+
