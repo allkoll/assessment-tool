@@ -38,11 +38,18 @@
             padding: 10px;
             cursor: pointer;
         }
+        #insights {
+            margin-top: 20px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
 
 <h2>KollAnalyst - Proficiency Level Distribution</h2>
+
+<label for="assessment-name">Assessment Name:</label>
+<input type="text" id="assessment-name" placeholder="Enter assessment name" style="margin-bottom: 20px;">
 
 <table id="teacher-table">
     <thead>
@@ -74,6 +81,8 @@
     <div id="graph"></div>
 </div>
 
+<div id="insights"></div>
+
 <script>
     let teacherCount = 1;
 
@@ -94,48 +103,113 @@
     }
 
     function updateGraph() {
-        let totalFours = 0;
-        let totalThrees = 0;
-        let totalTwos = 0;
-        let totalOnes = 0;
-        let totalNs = 0;
+        const assessmentName = document.getElementById('assessment-name').value || 'Assessment';
+
+        let totals = { fours: 0, threes: 0, twos: 0, ones: 0, ns: 0 };
+        let teacherProficiencies = [];
 
         for (let i = 1; i <= teacherCount; i++) {
-            totalFours += parseInt(document.getElementById(`fours${i}`).value);
-            totalThrees += parseInt(document.getElementById(`threes${i}`).value);
-            totalTwos += parseInt(document.getElementById(`twos${i}`).value);
-            totalOnes += parseInt(document.getElementById(`ones${i}`).value);
-            totalNs += parseInt(document.getElementById(`ns${i}`).value);
+            const fours = parseInt(document.getElementById(`fours${i}`).value);
+            const threes = parseInt(document.getElementById(`threes${i}`).value);
+            const twos = parseInt(document.getElementById(`twos${i}`).value);
+            const ones = parseInt(document.getElementById(`ones${i}`).value);
+            const ns = parseInt(document.getElementById(`ns${i}`).value);
+
+            totals.fours += fours;
+            totals.threes += threes;
+            totals.twos += twos;
+            totals.ones += ones;
+            totals.ns += ns;
+
+            const totalForTeacher = fours + threes + twos + ones + ns;
+
+            teacherProficiencies.push({
+                teacher: `Teacher ${i}`,
+                fours: ((fours / totalForTeacher) * 100).toFixed(2),
+                threes: ((threes / totalForTeacher) * 100).toFixed(2),
+                twos: ((twos / totalForTeacher) * 100).toFixed(2),
+                ones: ((ones / totalForTeacher) * 100).toFixed(2),
+                ns: ((ns / totalForTeacher) * 100).toFixed(2),
+                total: totalForTeacher
+            });
         }
 
-        const total = totalFours + totalThrees + totalTwos + totalOnes + totalNs;
-
+        const overallTotal = totals.fours + totals.threes + totals.twos + totals.ones + totals.ns;
         const proficiencyPercentages = [
-            (totalFours / total * 100).toFixed(2),
-            (totalThrees / total * 100).toFixed(2),
-            (totalTwos / total * 100).toFixed(2),
-            (totalOnes / total * 100).toFixed(2),
-            (totalNs / total * 100).toFixed(2)
+            (totals.fours / overallTotal * 100).toFixed(2),
+            (totals.threes / overallTotal * 100).toFixed(2),
+            (totals.twos / overallTotal * 100).toFixed(2),
+            (totals.ones / overallTotal * 100).toFixed(2),
+            (totals.ns / overallTotal * 100).toFixed(2)
         ];
 
         const data = [{
-            values: [totalFours, totalThrees, totalTwos, totalOnes, totalNs],
+            values: [totals.fours, totals.threes, totals.twos, totals.ones, totals.ns],
             labels: ['4s', '3s', '2s', '1s', 'Ns'],
             type: 'pie',
-            hole: .4,  // Donut chart
+            hole: .4,
             textinfo: 'label+percent',
             insidetextorientation: 'radial',
             marker: {
-                colors: ['#00ffff', '#00ff00', '#ffff00', '#ff0000', '#ff00ff']  // Custom colors for each proficiency level
+                colors: ['#00ffff', '#00ff00', '#ffff00', '#ff0000', '#ff00ff']
             }
         }];
 
         const layout = {
-            title: 'Proficiency Level Distribution (%)',
+            title: `${assessmentName} - Proficiency Level Distribution (%)`,
             showlegend: true
         };
 
         Plotly.newPlot('graph', data, layout);
+
+        generateInsights(proficiencyPercentages, teacherProficiencies);
+    }
+
+    function generateInsights(overallPercentages, teacherProficiencies) {
+        let overallHighest = Math.max(...overallPercentages.map(Number));
+        let overallLowest = Math.min(...overallPercentages.map(Number));
+
+        const overallLevels = ['4s', '3s', '2s', '1s', 'Ns'];
+        const overallHighestIndex = overallPercentages.indexOf(overallHighest.toString());
+        const overallLowestIndex = overallPercentages.indexOf(overallLowest.toString());
+
+        let insights = `
+            <strong>Overall Insights:</strong><br>
+            The highest overall percentage is ${overallHighest}% for ${overallLevels[overallHighestIndex]}.<br>
+            The lowest overall percentage is ${overallLowest}% for ${overallLevels[overallLowestIndex]}.<br>
+        `;
+
+        if (overallHighestIndex === 0) {
+            insights += 'Most students are scoring at the highest proficiency level (4s).<br>';
+        } else if (overallLowestIndex === 0) {
+            insights += 'Very few students are achieving the highest proficiency level (4s).<br>';
+        }
+
+        insights += '<strong>Teacher-Specific Insights:</strong><br>';
+
+        teacherProficiencies.forEach(proficiency => {
+            const teacher = proficiency.teacher;
+            let teacherHighest = Math.max(
+                proficiency.fours,
+                proficiency.threes,
+                proficiency.twos,
+                proficiency.ones,
+                proficiency.ns
+            );
+            let teacherLowest = Math.min(
+                proficiency.fours,
+                proficiency.threes,
+                proficiency.twos,
+                proficiency.ones,
+                proficiency.ns
+            );
+
+            insights += `
+                ${teacher}: The highest percentage is ${teacherHighest}% and the lowest percentage is ${teacherLowest}%.<br>
+            `;
+        });
+
+        document.getElementById('insights').innerHTML = insights;
     }
 </script>
 
