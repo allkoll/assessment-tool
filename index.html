@@ -21,6 +21,9 @@
             width: 80%;
             max-width: 600px;
         }
+        .teacher-input {
+            margin-bottom: 20px;
+        }
         input {
             margin: 5px;
         }
@@ -29,40 +32,73 @@
 <body>
 
 <h2>KollAnalyst - Proficiency Level Distribution</h2>
-<div>
-    <label for="fours">Number of 4s:</label>
-    <input type="number" id="fours" value="0">
-    <label for="threes">Number of 3s:</label>
-    <input type="number" id="threes" value="0">
-    <label for="twos">Number of 2s:</label>
-    <input type="number" id="twos" value="0">
-    <label for="ones">Number of 1s:</label>
-    <input type="number" id="ones" value="0">
-    <button onclick="updateGraph()">Graph Proficiency</button>
+
+<div id="teacher-container">
+    <div class="teacher-input">
+        <h3>Teacher 1</h3>
+        <label for="fours1">Number of 4s:</label>
+        <input type="number" id="fours1" value="0">
+        <label for="threes1">Number of 3s:</label>
+        <input type="number" id="threes1" value="0">
+        <label for="twos1">Number of 2s:</label>
+        <input type="number" id="twos1" value="0">
+        <label for="ones1">Number of 1s:</label>
+        <input type="number" id="ones1" value="0">
+    </div>
 </div>
+
+<button onclick="addTeacher()">Add Another Teacher</button>
+<button onclick="updateGraph()">Graph Proficiency</button>
 
 <div id="graph-container">
     <div id="graph"></div>
 </div>
 
 <script>
-    function updateGraph() {
-        const fours = parseInt(document.getElementById('fours').value);
-        const threes = parseInt(document.getElementById('threes').value);
-        const twos = parseInt(document.getElementById('twos').value);
-        const ones = parseInt(document.getElementById('ones').value);
+    let teacherCount = 1;
 
-        const total = fours + threes + twos + ones;
+    function addTeacher() {
+        teacherCount++;
+        const teacherDiv = document.createElement('div');
+        teacherDiv.classList.add('teacher-input');
+        teacherDiv.innerHTML = `
+            <h3>Teacher ${teacherCount}</h3>
+            <label for="fours${teacherCount}">Number of 4s:</label>
+            <input type="number" id="fours${teacherCount}" value="0">
+            <label for="threes${teacherCount}">Number of 3s:</label>
+            <input type="number" id="threes${teacherCount}" value="0">
+            <label for="twos${teacherCount}">Number of 2s:</label>
+            <input type="number" id="twos${teacherCount}" value="0">
+            <label for="ones${teacherCount}">Number of 1s:</label>
+            <input type="number" id="ones${teacherCount}" value="0">
+        `;
+        document.getElementById('teacher-container').appendChild(teacherDiv);
+    }
+
+    function updateGraph() {
+        let totalFours = 0;
+        let totalThrees = 0;
+        let totalTwos = 0;
+        let totalOnes = 0;
+
+        for (let i = 1; i <= teacherCount; i++) {
+            totalFours += parseInt(document.getElementById(`fours${i}`).value);
+            totalThrees += parseInt(document.getElementById(`threes${i}`).value);
+            totalTwos += parseInt(document.getElementById(`twos${i}`).value);
+            totalOnes += parseInt(document.getElementById(`ones${i}`).value);
+        }
+
+        const total = totalFours + totalThrees + totalTwos + totalOnes;
 
         const proficiencyPercentages = [
-            (fours / total * 100).toFixed(2),
-            (threes / total * 100).toFixed(2),
-            (twos / total * 100).toFixed(2),
-            (ones / total * 100).toFixed(2)
+            (totalFours / total * 100).toFixed(2),
+            (totalThrees / total * 100).toFixed(2),
+            (totalTwos / total * 100).toFixed(2),
+            (totalOnes / total * 100).toFixed(2)
         ];
 
         const data = [{
-            values: [fours, threes, twos, ones],
+            values: [totalFours, totalThrees, totalTwos, totalOnes],
             labels: ['4s', '3s', '2s', '1s'],
             type: 'pie',
             hole: .4,  // Makes it a donut chart
