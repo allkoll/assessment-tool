@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Proficiency Graph</title>
+    <title>KollAnalyst - Proficiency Graph</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
         body {
@@ -28,7 +28,7 @@
 </head>
 <body>
 
-<h2>Proficiency Level Distribution</h2>
+<h2>KollAnalyst - Proficiency Level Distribution</h2>
 <div>
     <label for="fours">Number of 4s:</label>
     <input type="number" id="fours" value="0">
@@ -62,17 +62,17 @@
         ];
 
         const data = [{
-            x: ['4s', '3s', '2s', '1s'],
-            y: proficiencyPercentages,
-            type: 'bar',
-            text: proficiencyPercentages.map(String),
-            textposition: 'auto'
+            values: [fours, threes, twos, ones],
+            labels: ['4s', '3s', '2s', '1s'],
+            type: 'pie',
+            hole: .4,  // Makes it a donut chart
+            textinfo: 'label+percent',
+            insidetextorientation: 'radial'
         }];
 
         const layout = {
             title: 'Proficiency Level Distribution (%)',
-            xaxis: { title: 'Proficiency Level' },
-            yaxis: { title: 'Percentage (%)' }
+            showlegend: true
         };
 
         Plotly.newPlot('graph', data, layout);
