@@ -52,6 +52,7 @@
             <th>3s</th>
             <th>2s</th>
             <th>1s</th>
+            <th>Ns</th>
         </tr>
     </thead>
     <tbody>
@@ -61,6 +62,7 @@
             <td><input type="number" id="threes1" value="0"></td>
             <td><input type="number" id="twos1" value="0"></td>
             <td><input type="number" id="ones1" value="0"></td>
+            <td><input type="number" id="ns1" value="0"></td>
         </tr>
     </tbody>
 </table>
@@ -86,6 +88,7 @@
             <td><input type="number" id="threes${teacherCount}" value="0"></td>
             <td><input type="number" id="twos${teacherCount}" value="0"></td>
             <td><input type="number" id="ones${teacherCount}" value="0"></td>
+            <td><input type="number" id="ns${teacherCount}" value="0"></td>
         `;
         tableBody.appendChild(newRow);
     }
@@ -95,30 +98,36 @@
         let totalThrees = 0;
         let totalTwos = 0;
         let totalOnes = 0;
+        let totalNs = 0;
 
         for (let i = 1; i <= teacherCount; i++) {
             totalFours += parseInt(document.getElementById(`fours${i}`).value);
             totalThrees += parseInt(document.getElementById(`threes${i}`).value);
             totalTwos += parseInt(document.getElementById(`twos${i}`).value);
             totalOnes += parseInt(document.getElementById(`ones${i}`).value);
+            totalNs += parseInt(document.getElementById(`ns${i}`).value);
         }
 
-        const total = totalFours + totalThrees + totalTwos + totalOnes;
+        const total = totalFours + totalThrees + totalTwos + totalOnes + totalNs;
 
         const proficiencyPercentages = [
             (totalFours / total * 100).toFixed(2),
             (totalThrees / total * 100).toFixed(2),
             (totalTwos / total * 100).toFixed(2),
-            (totalOnes / total * 100).toFixed(2)
+            (totalOnes / total * 100).toFixed(2),
+            (totalNs / total * 100).toFixed(2)
         ];
 
         const data = [{
-            values: [totalFours, totalThrees, totalTwos, totalOnes],
-            labels: ['4s', '3s', '2s', '1s'],
+            values: [totalFours, totalThrees, totalTwos, totalOnes, totalNs],
+            labels: ['4s', '3s', '2s', '1s', 'Ns'],
             type: 'pie',
             hole: .4,  // Donut chart
             textinfo: 'label+percent',
-            insidetextorientation: 'radial'
+            insidetextorientation: 'radial',
+            marker: {
+                colors: ['#00ffff', '#00ff00', '#ffff00', '#ff0000', '#ff00ff']  // Custom colors for each proficiency level
+            }
         }];
 
         const layout = {
