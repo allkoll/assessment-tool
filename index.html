@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Proficiency App</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Student Proficiency Tracker</h1>
+    
+    <!-- Form for entering student scores -->
+    <form id="scoreForm">
+        <label for="score4">Number of 4s:</label>
+        <input type="number" id="score4" name="score4" required><br><br>
+        
+        <label for="score3">Number of 3s:</label>
+        <input type="number" id="score3" name="score3" required><br><br>
+        
+        <label for="score2">Number of 2s:</label>
+        <input type="number" id="score2" name="score2" required><br><br>
+        
+        <label for="score1">Number of 1s:</label>
+        <input type="number" id="score1" name="score1" required><br><br>
+
+        <button type="button" onclick="generateChart()">Submit Scores</button>
+    </form>
+
+    <div id="chart"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
